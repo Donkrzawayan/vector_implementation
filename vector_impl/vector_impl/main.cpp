@@ -18,6 +18,9 @@ int main()
 		std::cin >> i.i >> i.f;
 	ps.push_back(new some);
 	s.pop_back();
+	std::cout << s.front().i;
+	s.erase(s.begin());
+	std::cout << s.front().i;
 
 	return 0;
 }

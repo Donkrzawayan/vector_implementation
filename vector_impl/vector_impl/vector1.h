@@ -52,6 +52,7 @@ public:
 	//modyfying
 	void push_back(const value_type &t);
 	void pop_back() { arr[--m_size].~T(); }
+	iterator erase(const_iterator position);
 	void clear();
 };
 
@@ -59,7 +60,7 @@ template<typename T>
 inline Vector<T>& Vector<T>::operator=(const Vector<T>& v)
 {
 	if (this != &v) {
-		this->~Vector();
+		~Vector();
 		m_size = v.m_size;
 		m_capacity = v.m_capacity;
 		arr = new T[m_capacity];
@@ -111,6 +112,19 @@ inline void Vector<T>::push_back(const value_type &t)
 			reserve(m_capacity + 1U);
 	}
 	arr[m_size++] = t;
+}
+
+template<typename T>
+inline typename Vector<T>::iterator Vector<T>::erase(const_iterator position)
+{
+	position->~T();
+	for (auto i = const_cast<iterator>(position); i < end() - 1; ++i) //first option
+		(*i) = std::move(*(i + 1));
+	/*for (size_t i = position - begin(); i < m_size; ++i) //second option
+		arr[i] = std::move(arr[i + 1]);*/
+	--m_size;
+
+	return const_cast<iterator>(position);
 }
 
 template<typename T>
