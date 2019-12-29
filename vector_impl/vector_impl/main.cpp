@@ -11,16 +11,19 @@ struct some {
 int main()
 {
 	Vector<some *>ps;
-	Vector<some>s(2);
+	ps.push_back(new some);
 
-	s.resize(5);
+	Vector<some>s(2);
+	s.resize(3);
 	for (auto &i : s)
 		std::cin >> i.i >> i.f;
-	ps.push_back(new some);
 	s.pop_back();
-	std::cout << s.front().i;
+	std::cout << s.front().i << '\n';
 	s.erase(s.begin());
-	std::cout << s.front().i;
+	some a{ 6, 9.9F };
+	s.push_back(std::move(a));
+	for(auto &i: s)
+		std::cout << i.i;
 
 	return 0;
 }

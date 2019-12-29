@@ -1,6 +1,6 @@
 #ifndef VECTOR1_H
 #define VECTOR1_H
-#include <utility>
+#include <utility> //move()
 
 template <typename T>
 class Vector
@@ -15,6 +15,8 @@ public:
 	using iterator = T * ;
 	using const_iterator = const T *;
 	using size_type = size_t;
+protected:
+	void enough_capacity();
 public:
 	//constructor
 	Vector() : m_size(0U), m_capacity(0U), arr(nullptr) {}
@@ -51,10 +53,22 @@ public:
 
 	//modyfying
 	void push_back(const value_type &t);
+	void push_back(value_type&& val);
 	void pop_back() { arr[--m_size].~T(); }
 	iterator erase(const_iterator position);
 	void clear();
 };
+
+template<typename T>
+inline void Vector<T>::enough_capacity()
+{
+	if (m_size >= m_capacity) {
+		if (m_capacity > 3)
+			reserve(m_capacity / 2U * 3U);
+		else //m_capacity == 0/1/2
+			reserve(m_capacity + 1U);
+	}
+}
 
 template<typename T>
 inline Vector<T>& Vector<T>::operator=(const Vector<T>& v)
@@ -105,13 +119,15 @@ inline void Vector<T>::reserve(size_type n)
 template<typename T>
 inline void Vector<T>::push_back(const value_type &t)
 {
-	if (m_size >= m_capacity) {
-		if (m_capacity > 3)
-			reserve(m_capacity / 2U * 3U);
-		else //m_capacity == 0/1/2
-			reserve(m_capacity + 1U);
-	}
+	enough_capacity();
 	arr[m_size++] = t;
+}
+
+template<typename T>
+inline void Vector<T>::push_back(value_type && val)
+{
+	enough_capacity();
+	arr[m_size++] = std::move(val);
 }
 
 template<typename T>
