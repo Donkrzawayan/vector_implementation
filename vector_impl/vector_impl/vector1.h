@@ -1,5 +1,6 @@
 #ifndef VECTOR1_H
 #define VECTOR1_H
+#include <cstddef> //size_t
 #include <utility> //move()
 
 template <typename T>
@@ -11,11 +12,11 @@ class Vector
 public:
 	using value_type = T;
 	using reference = T & ;
-	using const_reference = const T & ;
+	using const_reference = const T &;
 	using iterator = T * ;
 	using const_iterator = const T *;
 	using size_type = size_t;
-protected:
+private:
 	void enough_capacity();
 public:
 	//constructor
@@ -63,10 +64,18 @@ template<typename T>
 inline void Vector<T>::enough_capacity()
 {
 	if (m_size >= m_capacity) {
+
+		//Visual-like
 		if (m_capacity > 3)
 			reserve(m_capacity / 2U * 3U);
-		else //m_capacity == 0/1/2
+		else //m_capacity == 0/1/2/3
 			reserve(m_capacity + 1U);
+
+		//GCC-like
+		/*if (m_capacity)
+			reserve(2U * m_capacity);
+		else
+			reserve(1U);*/
 	}
 }
 
@@ -134,10 +143,15 @@ template<typename T>
 inline typename Vector<T>::iterator Vector<T>::erase(const_iterator position)
 {
 	position->~T();
-	for (auto i = const_cast<iterator>(position); i < end() - 1; ++i) //first option
+
+	//pointer arithmetic
+	for (auto i = const_cast<iterator>(position); i < end() - 1; ++i)
 		(*i) = std::move(*(i + 1));
-	/*for (size_t i = position - begin(); i < m_size; ++i) //second option
+
+	//second option
+	/*for (size_t i = position - begin(); i < m_size; ++i)
 		arr[i] = std::move(arr[i + 1]);*/
+
 	--m_size;
 
 	return const_cast<iterator>(position);
